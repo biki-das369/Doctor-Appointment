@@ -1,0 +1,17 @@
+{
+  "doctors": [
+    {
+      "id": "doc001",
+      "name": "Dr. ABC",
+      "img": "female.jpg",
+      "specialization": "Cardiologist"
+    },
+    {
+      "id": "doc002",
+      "name": "Dr. XYZ",
+      "img": "male.jpg",
+      "specialization": "Orthopedic"
+    }
+  ],
+  "patients":[{}]
+}
