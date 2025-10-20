@@ -1,23 +1,92 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 export default function BookingPage() {
-  function bookedPage() {
-    console.log(firstName, lastName, email, call);
-
-    // const formData = {
-    //   firstName: firstName,
-    //   lastName: lastName,
-    //   email: email,
-    //   call: call,
-    // };
-
-    // const jsonData = JSON.stringify(formData);
-  }
-
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [call, setCall] = useState(0);
+  const [call, setCall] = useState("");
+  const [time, setTime] = useState("");
+  const [date, setDate] = useState("");
+  const [docId, setDocId] = useState("");
+
+  // async function bookedPage(e) {
+  //   e.preventDefault();
+
+  //   const newPatient = {
+  //     firstName,
+  //     lastName,
+  //     email,
+  //     call,
+  //   };
+
+  //   try {
+  //     const response = await fetch("http://localhost:3000/patients", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(newPatient),
+  //     });
+
+  //     if (response.ok) {
+  //       alert("✅ Booking saved successfully!");
+  //       setFirstName("");
+  //       setLastName("");
+  //       setEmail("");
+  //       setCall("");
+  //     } else {
+  //       alert("❌ Failed to save booking!");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert("⚠️ Something went wrong!");
+  //   }
+  // }
+
+  const { id } = useParams();
+  console.log("id", id);
+
+  async function bookedPage(e) {
+    e.preventDefault();
+    console.log(time);
+    console.log(date);
+
+    const newPatient = {
+      firstName,
+      lastName,
+      email,
+      call,
+      docId,
+      date,
+      time,
+    };
+    try {
+      setDocId(id);
+      const response = await fetch("http://localhost:3000/patients", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(newPatient),
+      });
+      if (response.ok) {
+        alert("Booking Sucessful");
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setCall("");
+        setDate("");
+        setTime("");
+        setDocId("");
+      } else {
+        alert("Failed to Book");
+      }
+    } catch (error) {
+      alert("Something went wrong");
+      console.log(error);
+    }
+  }
 
   return (
     <>
@@ -26,7 +95,14 @@ export default function BookingPage() {
           <h1 className="text-4xl font-bold mb-10 text-blue-600">
             Choose Date
           </h1>
-          <input type="date" />
+          <input
+            type="date"
+            value={date}
+            // min={Date.now}
+
+            min={new Date().toISOString().split("T")[0]}
+            onChange={(e) => setDate(e.target.value)}
+          />
         </div>
         <div className="w-[50%]">
           <h1 className="text-4xl font-bold mb-10 text-blue-600">
@@ -35,6 +111,8 @@ export default function BookingPage() {
           <p>Set time by clicking the following</p>
           <input
             type="time"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
             className="border-2 border-black my-3 px-2 py-1 font-bold "
           />
 
