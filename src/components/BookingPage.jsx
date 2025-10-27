@@ -10,39 +10,6 @@ export default function BookingPage() {
   const [date, setDate] = useState("");
   const [docId, setDocId] = useState("");
 
-  // async function bookedPage(e) {
-  //   e.preventDefault();
-
-  //   const newPatient = {
-  //     firstName,
-  //     lastName,
-  //     email,
-  //     call,
-  //   };
-
-  //   try {
-  //     const response = await fetch("http://localhost:3000/patients", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(newPatient),
-  //     });
-
-  //     if (response.ok) {
-  //       alert("✅ Booking saved successfully!");
-  //       setFirstName("");
-  //       setLastName("");
-  //       setEmail("");
-  //       setCall("");
-  //     } else {
-  //       alert("❌ Failed to save booking!");
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("⚠️ Something went wrong!");
-  //   }
-  // }
 
   const { id } = useParams();
   console.log("id", id);
@@ -60,11 +27,9 @@ export default function BookingPage() {
 
     if (!firstName || !lastName || !email || !call || !date || !time) {
       alert("Fill all the details");
+      return;
     }
 
-    // if (firstName.length < 3 || lastName.length < 3 || call.length !== 10) {
-    //   alert("Enter correct details");
-    // }
 
     const newPatient = {
       firstName,
@@ -76,7 +41,20 @@ export default function BookingPage() {
       time,
     };
     try {
-      
+      // Check for existing booking for the same doctor, date, and time
+      const conflictRes = await fetch(
+        `http://localhost:3000/patients?docId=${encodeURIComponent(
+          id
+        )}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}`
+      );
+      const conflicts = await conflictRes.json();
+      if (Array.isArray(conflicts) && conflicts.length > 0) {
+        alert(
+          "Selected time is already booked for this doctor. Please choose another time."
+        );
+        return;
+      }
+
       const response = await fetch("http://localhost:3000/patients", {
         method: "POST",
         headers: {
@@ -171,3 +149,6 @@ export default function BookingPage() {
     </>
   );
 }
+
+//npx json-server --watch ./data/data.json --port 3000
+// D:\Nandini-Doctor\Doctor-Appointment\data\data.json
