@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export default function BookingPage() {
@@ -47,22 +47,36 @@ export default function BookingPage() {
   const { id } = useParams();
   console.log("id", id);
 
+  useEffect(() => {
+    setDocId(id);
+  }, [id]);
+
+  console.log(docId);
+
   async function bookedPage(e) {
     e.preventDefault();
     console.log(time);
     console.log(date);
+
+    if (!firstName || !lastName || !email || !call || !date || !time) {
+      alert("Fill all the details");
+    }
+
+    // if (firstName.length < 3 || lastName.length < 3 || call.length !== 10) {
+    //   alert("Enter correct details");
+    // }
 
     const newPatient = {
       firstName,
       lastName,
       email,
       call,
-      docId,
+      docId: id,
       date,
       time,
     };
     try {
-      setDocId(id);
+      
       const response = await fetch("http://localhost:3000/patients", {
         method: "POST",
         headers: {
@@ -70,6 +84,7 @@ export default function BookingPage() {
         },
         body: JSON.stringify(newPatient),
       });
+
       if (response.ok) {
         alert("Booking Sucessful");
         setFirstName("");
